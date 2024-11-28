@@ -1,0 +1,62 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-image: url("/src/image/background.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+  .blur-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.3);
+    filter: blur(10px);
+    pointer-events: none;
+    z-index: 10;
+    transition: filter linear, background-color ease-in-out;
+  }
+
+  .flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0;
+    pointer-events: none;
+    animation: flash 100ms ease-out forwards;
+  }
+
+  @keyframes flash {
+    0% {
+      opacity: 0.8;
+    }
+    50% {
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .rainbow-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 20;
+    opacity: 0.45; /* Прозрачность фона */
+  }
