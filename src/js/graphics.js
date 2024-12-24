@@ -64,7 +64,7 @@ function startBlurEffect() {
     clearInterval(blurInterval);
     document.body.removeChild(blurElement);
     startSecondEffect();
-  }, 80); // Продолжительность первого эффекта
+  }, 80000); // Продолжительность первого эффекта
 }
 
 // Второй эффект: Вспышки
