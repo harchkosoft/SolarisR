@@ -64,7 +64,7 @@ function startBlurEffect() {
     clearInterval(blurInterval);
     document.body.removeChild(blurElement);
     startSecondEffect();
-  }, 80000); // Продолжительность первого эффекта
+  }, 80); // Продолжительность первого эффекта
 }
 
 // Второй эффект: Вспышки
@@ -76,8 +76,8 @@ const audioFiles = [
   "src/audio/2c.mp3",
   "src/audio/2d.mp3",
   "src/audio/2e.mp3",
-  // "src/audio/2f.mp3",
-  // "src/audio/2g.mp3",
+  "src/audio/2f.mp3",
+  "src/audio/2g.mp3",
   // "src/audio/2h.mp3",
   // "src/audio/2i.mp3",
 ];
@@ -286,54 +286,73 @@ function setAnimationSpeed() {
 function animate() {
   drawShapes();
 }
-// Четвёртый эффект: Мерцание и плавающие круги
+// Четвёртый эффект: Мгновенные выколотые круги с увеличением
+// Четвёртый эффект: Резкие растущие круги без анимации, увеличивающиеся из центра
 function startFourthEffect() {
-  // Создание мерцающего фона
+  // Создание мерцающего и искажённого фона
   const glitchBackground = document.createElement("div");
   glitchBackground.className = "glitch-background";
   document.body.appendChild(glitchBackground);
 
-  // Создание контейнера для плавающих кругов
-  const floatingCircles = document.createElement("div");
-  floatingCircles.className = "floating-circles";
-  document.body.appendChild(floatingCircles);
-
-  // Генерация плавающих кругов
-  const circleCount = 20;
-  for (let i = 0; i < circleCount; i++) {
-    const circle = document.createElement("div");
-    circle.style.position = "absolute";
-    circle.style.width = `${Math.random() * 100 + 50}px`;
-    circle.style.height = circle.style.width;
-    circle.style.background = `hsla(${Math.random() * 360}, 100%, 50%, 0.7)`;
-    circle.style.borderRadius = "50%";
-    circle.style.top = `${Math.random() * 100}vh`;
-    circle.style.left = `${Math.random() * 100}vw`;
-    circle.style.animation = `floatAnimation ${
-      Math.random() * 5 + 3
-    }s infinite ease-in-out`;
-    floatingCircles.appendChild(circle);
-  }
-
-  // Анимация для кругов
+  // Стили для круга и искажения
   const style = document.createElement("style");
   style.innerHTML = `
-    @keyframes floatAnimation {
-      0% {
-        transform: translateY(0);
-        opacity: 0.7;
-      }
-      50% {
-        transform: translateY(-20px) translateX(10px);
-        opacity: 0.9;
-      }
-      100% {
-        transform: translateY(0);
-        opacity: 0.7;
-      }
+    .hollow-circle {
+      position: absolute;
+      border: 10px solid rgba(0, 255, 0, 0.9); /* Фиксированный цвет */
+      border-radius: 50%;
+      box-shadow: 0 0 30px 10px rgba(0, 255, 0, 0.8);
+      pointer-events: none;
+      opacity: 1;
+      z-index: 1000;
+      width: 150px;
+      height: 150px;
+      transition: width 1.5s, height 1.5s; /* Увеличение размера за 1.5 секунды */
+      transform-origin: center; /* Увеличение из центра */
+    }
+
+    .hollow-circle.static {
+      width: 750px;
+      height: 750px;
     }
   `;
   document.head.appendChild(style);
+
+  let activeCircles = 0; // Счётчик активных кругов
+
+  // Функция для создания круга
+  function createGrowingCircle() {
+    if (activeCircles >= 2) return; // Ограничение до 2 кругов одновременно
+
+    activeCircles++;
+
+    const circle = document.createElement("div");
+    circle.className = "hollow-circle";
+
+    // Случайное расположение (центр круга будет в этом месте)
+    const randomX = Math.random() * (window.innerWidth - 750);
+    const randomY = Math.random() * (window.innerHeight - 750);
+
+    circle.style.top = `${randomY}px`;
+    circle.style.left = `${randomX}px`;
+
+    document.body.appendChild(circle);
+
+    // Увеличиваем круг до 750px за 1.5 секунды
+    setTimeout(() => {
+      circle.classList.add("static");
+    }, 10); // Начнём увеличивать почти сразу
+
+    // Удаляем круг после завершения
+    setTimeout(() => {
+      document.body.removeChild(circle);
+      activeCircles--;
+    }, 1500); // Круг остаётся 1.5 секунды
+  }
+
+  // Запускаем круги с интервалом
+  createGrowingCircle(); // Первый круг сразу
+  setInterval(createGrowingCircle, 1000); // Следующий круг каждые 1 секунду
 
   // Аудио для 4-го эффекта
   const audio4 = new Audio("src/audio/4.mp3");
@@ -346,11 +365,12 @@ function startFourthEffect() {
   // Завершение эффекта
   audio4.addEventListener("ended", () => {
     document.body.removeChild(glitchBackground);
-    document.body.removeChild(floatingCircles);
     document.head.removeChild(style);
     console.log("Четвёртый эффект завершён.");
   });
 }
+
+// Переход от третьего к четвёртому эффекту
 audio3.addEventListener("ended", () => {
   clearInterval(intervalId);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
