@@ -64,7 +64,7 @@ function startBlurEffect() {
     clearInterval(blurInterval);
     document.body.removeChild(blurElement);
     startSecondEffect();
-  }, 80); // Продолжительность первого эффекта
+  }, 80000); // Продолжительность первого эффекта
 }
 
 // Второй эффект: Вспышки
@@ -366,7 +366,7 @@ function startFourthEffect() {
   audio4.addEventListener("ended", () => {
     document.body.removeChild(glitchBackground);
     document.head.removeChild(style);
-    console.log("Четвёртый эффект завершён.");
+    startFifthEffect(); // Запуск пятого эффекта
   });
 }
 
@@ -378,7 +378,148 @@ audio3.addEventListener("ended", () => {
   startFourthEffect(); // Запуск четвёртого эффекта
 });
 
+function startFifthEffect() {
+  const audio5 = new Audio("src/audio/5.mp3");
+  audio5
+    .play()
+    .catch((err) => console.error("Ошибка воспроизведения пятого аудио:", err));
+
+  // Контейнер для эффекта
+  const fifthEffectContainer = document.createElement("div");
+  fifthEffectContainer.id = "fifth-effect";
+  fifthEffectContainer.style.position = "absolute";
+  fifthEffectContainer.style.top = "0";
+  fifthEffectContainer.style.left = "0";
+  fifthEffectContainer.style.width = "100%";
+  fifthEffectContainer.style.height = "100%";
+  fifthEffectContainer.style.pointerEvents = "none";
+  fifthEffectContainer.style.zIndex = "999";
+  document.body.appendChild(fifthEffectContainer);
+
+  // Инициализация Three.js
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+  const renderer = new THREE.WebGLRenderer({ alpha: true }); // Прозрачный фон
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  fifthEffectContainer.appendChild(renderer.domElement);
+
+  // Устанавливаем прозрачный фон
+  renderer.setClearColor(0x000000, 0); // Черный фон с полной прозрачностью
+
+  const spheres = [];
+  const sphereGeometry = new THREE.SphereGeometry(0.05, 16, 16); // Маленькие сферы
+  const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // Для радужной сферы
+
+  const borderGeometry = new THREE.SphereGeometry(0.055, 16, 16); // Немного большая сфера для бордера
+  const borderMaterial = new THREE.MeshBasicMaterial({
+    color: 0x808080, // Серый цвет для бордера
+    opacity: 0.5, // Немного прозрачности, чтобы увидеть радужный цвет
+    transparent: true, // Включаем прозрачность
+  });
+
+  const group = new THREE.Group(); // Группа для управления всеми сферами
+  scene.add(group);
+
+  for (let i = 0; i < 1000; i++) {
+    // Сфера с радужным цветом
+    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial.clone());
+    // Бордер
+    const border = new THREE.Mesh(borderGeometry, borderMaterial.clone());
+
+    group.add(sphere);
+    group.add(border); // Добавляем бордер вокруг каждой сферы
+
+    spheres.push({ sphere, border }); // Храним пары для дальнейшего использования
+  }
+
+  camera.position.z = 5;
+
+  let colorShift = 0; // Для смены цветов
+  let sphereOffset = 0; // Смещение для диагонального движения
+  let pulseTime = 0; // Время для синхронной пульсации
+  const pulseFrequency = 50; // Частота пульсации в ударах в минуту
+  const pulseSpeed = (pulseFrequency / 60) * Math.PI * 2; // Сколько радиан наращивается за один кадр для пульсации
+
+  // Функция для обновления фона
+  function updateBackground() {
+    const colors = [
+      new THREE.Color(0x550000), // Темно-красный
+      new THREE.Color(0x000000), // Черный
+      new THREE.Color(0x333333), // Темно-серый
+      new THREE.Color(0x990000), // Красный
+    ];
+
+    // Меняем фон с плавными переходами
+    const backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+    // Добавляем прозрачность (например, 0.7)
+    scene.background = backgroundColor * 1;
+
+    // Устанавливаем прозрачность фона через setClearColor
+    renderer.setClearColor(backgroundColor, 0.7); // Устанавливаем прозрачность фона в 0.7
+  }
+
+  // Анимация и обновление фона
+  function animate() {
+    requestAnimationFrame(animate);
+
+    colorShift += 0.01; // Плавное изменение цвета
+    sphereOffset += 0.005; // Смещение для диагонального движения
+    pulseTime += pulseSpeed; // Время для пульсации
+
+    updateBackground(); // Обновляем фон
+
+    // Диагональное движение группы
+    group.position.x = Math.sin(sphereOffset) * 1.5; // Движение по X
+    group.position.y = Math.cos(sphereOffset) * 1.5; // Движение по Y
+
+    // Распределение в форме сферы
+    spheres.forEach(({ sphere, border }, index) => {
+      const phi = Math.acos(-1 + (2 * index) / spheres.length);
+      const theta = Math.sqrt(spheres.length * Math.PI) * phi;
+
+      sphere.position.x = 1.5 * Math.sin(phi) * Math.cos(theta);
+      sphere.position.y = 1.5 * Math.sin(phi) * Math.sin(theta);
+      sphere.position.z = 1.5 * Math.cos(phi);
+
+      border.position.x = sphere.position.x;
+      border.position.y = sphere.position.y;
+      border.position.z = sphere.position.z;
+
+      // Цвет сферы плавно меняется на радужный
+      const hue = (index / spheres.length + colorShift) % 1; // Радужный цвет на основе индекса
+      sphere.material.color.setHSL(hue, 1, 0.5); // Изменяем основной цвет на радужный
+
+      // Быстрая синхронная пульсация с частотой 120 ударов в минуту
+      const scale = 1 + 0.3 * Math.sin(pulseTime); // Пульсация с амплитудой 0.3
+      sphere.scale.setScalar(scale);
+      border.scale.setScalar(scale + 0.005); // Бордер немного больше, но очень маленький
+
+      // Серый цвет для бордера с прозрачностью
+      border.material.color.set(0x808080);
+    });
+
+    // Вращение группы для создания ощущения 3D
+    group.rotation.x += 0.01;
+    group.rotation.y += 0.01;
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  audio5.addEventListener("ended", () => {
+    document.body.removeChild(fifthEffectContainer);
+  });
+}
+
 // Запуск первого эффекта
+
 document.body.addEventListener("click", () => {
   if (audio1.paused && audio2.paused && audio3.paused) {
     audio1
