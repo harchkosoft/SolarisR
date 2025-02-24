@@ -2,7 +2,7 @@
   "name": "solarisr",
   "version": "1.0.0",
   "description": "SolarisR.web",
-  "homepage": "harchkosoft.github.io/SolarisR",
+  "homepage": "https://harchkosoft.github.io/SolarisR",
   "scripts": {
     "start": "parcel *.html",
     "build": "parcel build *.html --public-url /SolarisR/"
