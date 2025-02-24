@@ -1,11 +1,11 @@
 {
   "name": "solarisr",
-  "version": "1.0.0",
-  "description": "SolarisR.web",
-  "homepage": "https://harchkosoft.github.io/SolarisR",
+  "version": "2.0.0",
+  "description": "solarisR.web",
+  "homepage": "https://harchkosoft.github.io/SolarisR/",
   "scripts": {
     "start": "parcel *.html",
-    "build": "parcel build *.html --public-url /SolarisR/"
+    "build": "parcel build src/*.html --public-url /SolarisR/"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,13 @@
     "url": "https://github.com/harchkosoft/SolarisR/issues"
   },
   "dependencies": {
-    "parcel": "^2.13.3",
-    "save-dev": "^0.0.1-security"
-  }
+    "modern-normalize": "^1.1.0"
+  },
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.6.0",
+    "parcel": "^2.6.0",
+    "parcel-reporter-clean-dist": "^1.0.4",
+    "posthtml-include": "^1.7.4"
+  },
+  "browserslist": "> 0.5%, last 2 versions, not dead"
 }
