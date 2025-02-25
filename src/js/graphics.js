@@ -273,14 +273,14 @@ function removeMeltEffect() {
 // document.head.appendChild(style);
 // Глобальный массив аудиофайлов для второго эффекта
 const audioFiles = [
-  "/audio/2.mp3",
-  "/audio/2a.mp3",
-  "/audio/2b.mp3",
-  "/audio/2c.mp3",
-  "/audio/2d.mp3",
-  "/audio/2e.mp3",
-  "/audio/2f.mp3",
-  "/audio/2g.mp3",
+  ".src/audio/2.mp3",
+  ".src/audio/2a.mp3",
+  ".src/audio/2b.mp3",
+  ".src/audio/2c.mp3",
+  ".src/audio/2d.mp3",
+  ".src/audio/2e.mp3",
+  ".src/audio/2f.mp3",
+  ".src/audio/2g.mp3",
 ];
 
 // Функция для случайного выбора аудиофайла
