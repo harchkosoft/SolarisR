@@ -44,42 +44,243 @@ function stopRainbowBackground() {
   rainbowBackground.style.backgroundColor = ""; // Останавливаем смену фона
 }
 
-// Первый эффект: Размытие
+// Первый эффект: Размытие + Затемнение фона + Квадраты без анимации + Эффект плавления
 function startBlurEffect() {
   blurElement = document.createElement("div");
   blurElement.className = "blur-effect";
   document.body.appendChild(blurElement);
 
+  const squaresContainer = document.createElement("div");
+  squaresContainer.style.position = "absolute";
+  squaresContainer.style.top = "0";
+  squaresContainer.style.left = "0";
+  squaresContainer.style.width = "100vw";
+  squaresContainer.style.height = "100vh";
+  squaresContainer.style.pointerEvents = "none";
+  squaresContainer.style.zIndex = "15";
+  document.body.appendChild(squaresContainer);
+
+  let isDarkening = false; // Флаг для затемнения
+  let totalOffset = 0; // Накопленное смещение вправо-влево
+  const maxShake = 10; // Максимальная амплитуда дрожания
+  const shakeSpeed = 50; // Скорость обновления (миллисекунды)
+
   const blurInterval = setInterval(() => {
-    const randomBlur = 1;
+    const randomBlur = Math.random() * 5 + 5;
     blurElement.style.filter = `blur(${randomBlur}px)`;
 
     if (Math.random() < 0.1) {
       const randomColor = `hsla(${Math.random() * 360}, 100%, 50%, 0.4)`;
       blurElement.style.backgroundColor = randomColor;
     }
-  }, 50);
+
+    // Затемнение фона
+    if (!isDarkening && Math.random() < 0.05) {
+      isDarkening = true;
+
+      document.body.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+      setTimeout(() => {
+        isDarkening = false;
+        document.body.style.backgroundColor = "";
+      }, 1500);
+    }
+
+    // Создание случайных квадратов
+    createRandomSquare(squaresContainer);
+
+    // Эффект дрожания вправо-влево
+    const shakeOffset = Math.random() * maxShake * 2 - maxShake; // Случайное смещение в пределах [-maxShake, +maxShake]
+    totalOffset += shakeOffset * 0.1; // Накапливаем смещение (умеренно)
+    document.body.style.transform = `translateX(${totalOffset}px)`; // Применяем смещение
+  }, shakeSpeed);
 
   setTimeout(() => {
     clearInterval(blurInterval);
     document.body.removeChild(blurElement);
+    document.body.removeChild(squaresContainer);
+    document.body.style.transform = ""; // Сбрасываем transform после завершения эффекта
     startSecondEffect();
-  }, 80000); // Продолжительность первого эффекта
+  }, 8000); // Продолжительность первого эффекта
 }
 
-// Второй эффект: Вспышки
+// Функция для создания случайных квадратов
+function createRandomSquare(container) {
+  const square = document.createElement("div");
+  square.style.position = "absolute";
+
+  // Размер квадратов (от 200px до 450px)
+  const size = Math.random() * 250 + 200;
+  square.style.width = `${size}px`;
+  square.style.height = `${size}px`;
+
+  // Прозрачность 50%
+  square.style.backgroundColor = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`;
+
+  // Случайное положение на экране
+  const x = Math.random() * (window.innerWidth - size);
+  const y = Math.random() * (window.innerHeight - size);
+
+  square.style.top = `${y}px`;
+  square.style.left = `${x}px`;
+
+  container.appendChild(square);
+
+  // Резкое исчезновение квадратов
+  setTimeout(() => {
+    container.removeChild(square); // Удаляем квадрат сразу
+  }, Math.random() * 300 + 200); // Квадраты исчезают через случайный интервал (0.5-2 секунд)
+}
+
+// Функция для добавления эффекта плавления через CSS-фильтры
+function applyMeltEffect() {
+  const meltFilter = document.createElement("style");
+  meltFilter.innerHTML = `
+    body {
+      filter: contrast(1.5) brightness(0.9) saturate(1.2);
+      animation: meltEffect 2s infinite alternate;
+    }
+
+    @keyframes meltEffect {
+      0% {
+        filter: contrast(1.5) brightness(0.9) saturate(1.2);
+      }
+      50% {
+        filter: contrast(1.2) brightness(1.1) saturate(1.5);
+      }
+      100% {
+        filter: contrast(1.5) brightness(0.9) saturate(1.2);
+      }
+    }
+  `;
+  document.head.appendChild(meltFilter);
+}
+
+// Функция для удаления эффекта плавления
+function removeMeltEffect() {
+  const meltFilters = document.querySelectorAll("style");
+  meltFilters.forEach((style) => {
+    if (style.innerHTML.includes("meltEffect")) {
+      document.head.removeChild(style);
+    }
+  });
+  document.body.style.filter = ""; // Сбрасываем фильтр
+}
 // Массив доступных аудиофайлов
+// const audioFiles = [
+//   "./audio/2.mp3",
+//   "./audio/2a.mp3",
+//   "./audio/2b.mp3",
+//   "./audio/2c.mp3",
+//   "./audio/2d.mp3",
+//   "./audio/2e.mp3",
+//   "./audio/2f.mp3",
+//   "./audio/2g.mp3",
+// ];
+
+// // Функция для случайного выбора аудиофайла
+// function getRandomAudioFile() {
+//   const randomIndex = Math.floor(Math.random() * audioFiles.length);
+//   return audioFiles[randomIndex];
+// }
+
+// // Глобальная переменная для аудио
+// let secondEffectAudio;
+
+// // Второй эффект: Вспышки
+// function startSecondEffect() {
+//   const flashElement = document.createElement("div");
+//   flashElement.className = "flash";
+//   document.body.appendChild(flashElement);
+
+//   // Случайный выбор аудиофайла
+//   const randomAudioFile = getRandomAudioFile();
+
+//   // Создаем аудиоэлемент глобально
+//   secondEffectAudio = new Audio(randomAudioFile);
+//   secondEffectAudio.volume = 1; // Устанавливаем громкость на стандартное значение
+//   secondEffectAudio.play(); // Воспроизведение выбранного файла
+
+//   // Интервал для создания вспышек
+//   const flashInterval = setInterval(() => {
+//     createFlash();
+//   }, 85); // Более частые и резкие вспышки
+
+//   // Остановка эффекта после завершения аудио
+//   secondEffectAudio.addEventListener("ended", () => {
+//     clearInterval(flashInterval);
+//     document.body.removeChild(flashElement);
+//     startThirdEffect(); // Переход к следующему эффекту
+//   });
+// }
+
+// // Функция для создания вспышек
+// function createFlash() {
+//   const flash = document.createElement("div");
+//   flash.className = "flash";
+
+//   const size = 40; // Размер вспышек
+//   const rows = Math.ceil(window.innerHeight / size);
+//   const cols = Math.ceil(window.innerWidth / size);
+
+//   const canvasFlash = document.createElement("canvas");
+//   canvasFlash.width = window.innerWidth;
+//   canvasFlash.height = window.innerHeight;
+
+//   const ctxFlash = canvasFlash.getContext("2d");
+
+//   // Используем контрастные цвета
+//   const colors = ["#00ff00", "#800080"];
+
+//   // Заполняем экран цветами
+//   for (let row = 0; row < rows; row++) {
+//     for (let col = 0; col < cols; col++) {
+//       const x = col * size;
+//       const y = row * size;
+//       const color = colors[Math.floor(Math.random() * colors.length)];
+//       ctxFlash.fillStyle = color;
+//       ctxFlash.fillRect(x, y, size, size);
+//     }
+//   }
+
+//   // Добавляем анимацию вспышки
+//   flash.style.backgroundImage = `url(${canvasFlash.toDataURL()})`;
+//   flash.style.animation = "flashAnimation 0.2s linear"; // Быстрая анимация
+
+//   document.body.appendChild(flash);
+
+//   // Удаляем вспышку после завершения анимации
+//   flash.addEventListener("animationend", () => {
+//     document.body.removeChild(flash);
+//   });
+// }
+
+// // CSS для анимации вспышек
+// const style = document.createElement("style");
+// style.innerHTML = `
+//   @keyframes flashAnimation {
+//     0% { opacity: 1; }
+//     100% { opacity: 0; }
+//   }
+//   .flash {
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     width: 100%;
+//     height: 100%;
+//     pointer-events: none;
+//   }
+// `;
+// document.head.appendChild(style);
+// Глобальный массив аудиофайлов для второго эффекта
 const audioFiles = [
-  "src/audio/2.mp3",
-  "src/audio/2a.mp3",
-  "src/audio/2b.mp3",
-  "src/audio/2c.mp3",
-  "src/audio/2d.mp3",
-  "src/audio/2e.mp3",
-  "src/audio/2f.mp3",
-  "src/audio/2g.mp3",
-  // "src/audio/2h.mp3",
-  // "src/audio/2i.mp3",
+  "./audio/2.mp3",
+  "./audio/2a.mp3",
+  "./audio/2b.mp3",
+  "./audio/2c.mp3",
+  "./audio/2d.mp3",
+  "./audio/2e.mp3",
+  "./audio/2f.mp3",
+  "./audio/2g.mp3",
 ];
 
 // Функция для случайного выбора аудиофайла
@@ -87,35 +288,48 @@ function getRandomAudioFile() {
   const randomIndex = Math.floor(Math.random() * audioFiles.length);
   return audioFiles[randomIndex];
 }
-
 function startSecondEffect() {
   const flashElement = document.createElement("div");
   flashElement.className = "flash";
   document.body.appendChild(flashElement);
 
+  // Случайный выбор аудиофайла из глобального массива
+  const randomAudioFile = getRandomAudioFile();
+  const audioElement = new Audio(randomAudioFile);
+  audioElement.volume = 1;
+  audioElement.play();
+
+  // Интервал для создания вспышек
   const flashInterval = setInterval(() => {
     createFlash();
-  }, 85); // Уменьшаем интервал, чтобы вспышки были более частыми и резкими
+  }, 85); // Более частые и резкие вспышки
 
-  // Случайно выбираем аудиофайл
-  const randomAudioFile = getRandomAudioFile(); // Выбираем случайный файл из массива
-  const audioElement = new Audio(randomAudioFile);
-
-  audioElement.volume = 1; // Устанавливаем громкость на стандартное значение
-  audioElement.play(); // Воспроизведение выбранного файла
-
+  // Остановка эффекта после завершения аудио
   audioElement.addEventListener("ended", () => {
     clearInterval(flashInterval);
     document.body.removeChild(flashElement);
     startThirdEffect(); // Переход к следующему эффекту
   });
 }
+const randomPhrases = [
+  "Life is pain...",
+  "I'm lost in the darkness.",
+  "No one understands me.",
+  "The world is meaningless.",
+  "Escape is the only way out.",
+  "Why bother trying?",
+  "Alone in this world.",
+  "There's no light at the end of the tunnel.",
+  "Everything fades away.",
+  "I don't belong here.",
+];
 
+// Функция для создания вспышек
 function createFlash() {
   const flash = document.createElement("div");
   flash.className = "flash";
 
-  const size = 40; // Увеличиваем размер вспышек, чтобы они были более заметными
+  const size = 40; // Размер каждого квадратика
   const rows = Math.ceil(window.innerHeight / size);
   const cols = Math.ceil(window.innerWidth / size);
 
@@ -125,13 +339,10 @@ function createFlash() {
 
   const ctxFlash = canvasFlash.getContext("2d");
 
-  // Используем исходные цвета, но делаем их более контрастными и насыщенными
-  const colors = [
-    "#00ff00", // Зеленый
-    "#800080", // Фиолетовый
-  ];
+  // Оригинальные цвета: зеленый и фиолетовый
+  const colors = ["#00ff00", "#800080"];
 
-  // Заполняем экран более агрессивными цветами
+  // Рисуем квадратики на канве
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
       const x = col * size;
@@ -142,37 +353,59 @@ function createFlash() {
     }
   }
 
-  // Добавляем агрессивную анимацию с более быстрым исчезновением вспышек
+  // Применяем канву как фон вспышки
   flash.style.backgroundImage = `url(${canvasFlash.toDataURL()})`;
   flash.style.animation = "flashAnimation 0.2s linear"; // Быстрая анимация
 
   document.body.appendChild(flash);
 
+  // Добавляем случайный текст
+  addRandomText(); // Вызов функции для добавления текста
+
   flash.addEventListener("animationend", () => {
     document.body.removeChild(flash);
   });
 }
+// Функция для добавления случайного текста
+function addRandomText() {
+  const textElement = document.createElement("div");
+  textElement.className = "flash-text";
 
-// CSS для анимации вспышек
-const style = document.createElement("style");
-style.innerHTML = `
-  @keyframes flashAnimation {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
-  }
+  // Выбираем случайную фразу
+  const randomPhrase = randomPhrases[Math.floor(Math.random() * randomPhrases.length)];
+  textElement.textContent = randomPhrase;
 
-  .flash {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-`;
+  // Стилизация текста
+  textElement.style.position = "absolute";
+  textElement.style.color = "white";
+  textElement.style.fontFamily = "'Arial', sans-serif";
+  textElement.style.fontSize = "48px";
+  textElement.style.fontWeight = "bold";
+  textElement.style.textShadow = "0 0 15px black";
+  textElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+  textElement.style.padding = "10px 20px";
+  textElement.style.borderRadius = "5px";
+  textElement.style.pointerEvents = "none";
 
-document.head.appendChild(style);
+  // Случайная позиция текста
+  const randomX = Math.random() * (window.innerWidth - 400);
+  const randomY = Math.random() * (window.innerHeight - 100);
+  textElement.style.top = `${randomY}px`;
+  textElement.style.left = `${randomX}px`;
 
+  // Добавляем текст на страницу
+  document.body.appendChild(textElement);
+
+  // Удаляем текст после завершения анимации
+  setTimeout(() => {
+    document.body.removeChild(textElement);
+  }, 300); // Увеличим время до 300 мс, чтобы текст был заметнее
+}
+// function testText() {
+//   addRandomText();
+// }
+
+// setTimeout(testText, 1); // Добавляем текст через 1 секунду
 // Третий эффект: Геометрические фигуры
 function startThirdEffect() {
   audio3
@@ -355,7 +588,7 @@ function startFourthEffect() {
   setInterval(createGrowingCircle, 1000); // Следующий круг каждые 1 секунду
 
   // Аудио для 4-го эффекта
-  const audio4 = new Audio("src/audio/4.mp3");
+  const audio4 = new Audio("./audio/4.mp3");
   audio4
     .play()
     .catch((err) =>
@@ -379,7 +612,7 @@ audio3.addEventListener("ended", () => {
 });
 
 function startFifthEffect() {
-  const audio5 = new Audio("src/audio/5.mp3");
+  const audio5 = new Audio("./audio/5.mp3");
   audio5
     .play()
     .catch((err) => console.error("Ошибка воспроизведения пятого аудио:", err));

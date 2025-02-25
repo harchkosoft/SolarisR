@@ -20,19 +20,7 @@ body {
   z-index: 10;
   transition: filter linear, background-color ease-in-out;
 }
-
-.flash {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  opacity: 0;
-  pointer-events: none;
-  animation: flash 100ms ease-out forwards;
-}
-
-@keyframes flash {
+@keyframes flashAnimation {
   0% {
     opacity: 0.8;
   }
@@ -43,7 +31,42 @@ body {
     opacity: 0;
   }
 }
+.flash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
 
+.flash-text {
+  position: absolute;
+  z-index: 9999; /* Очень высокий индекс */
+  color: white;
+  font-family: 'Arial', sans-serif;
+  font-size: 48px;
+  font-weight: bold;
+  text-shadow: 0 0 15px black;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 10px 20px;
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+/* Анимация исчезновения текста */
+@keyframes textFade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.flash-text {
+  animation: textFade 0.2s linear forwards; /* Плавное исчезновение */
+}
 canvas {
   display: block;
   width: 100vw;
@@ -95,4 +118,40 @@ canvas {
   100% {
     background: rgba(255, 255, 0, 0.15);
   }
+}
+
+/* Анимация волны */
+@keyframes waveAnimation {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.wave {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Анимация текста */
+@keyframes textAnimation {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+}
+
+.flash-text {
+  position: absolute;
+  font-size: 24px;
+  color: white;
+  pointer-events: none;
 }
