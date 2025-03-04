@@ -165,122 +165,17 @@ function removeMeltEffect() {
   });
   document.body.style.filter = ""; // Сбрасываем фильтр
 }
-// Массив доступных аудиофайлов
-// const audioFiles = [
-//   "./audio/2.mp3",
-//   "./audio/2a.mp3",
-//   "./audio/2b.mp3",
-//   "./audio/2c.mp3",
-//   "./audio/2d.mp3",
-//   "./audio/2e.mp3",
-//   "./audio/2f.mp3",
-//   "./audio/2g.mp3",
-// ];
 
-// // Функция для случайного выбора аудиофайла
-// function getRandomAudioFile() {
-//   const randomIndex = Math.floor(Math.random() * audioFiles.length);
-//   return audioFiles[randomIndex];
-// }
-
-// // Глобальная переменная для аудио
-// let secondEffectAudio;
-
-// // Второй эффект: Вспышки
-// function startSecondEffect() {
-//   const flashElement = document.createElement("div");
-//   flashElement.className = "flash";
-//   document.body.appendChild(flashElement);
-
-//   // Случайный выбор аудиофайла
-//   const randomAudioFile = getRandomAudioFile();
-
-//   // Создаем аудиоэлемент глобально
-//   secondEffectAudio = new Audio(randomAudioFile);
-//   secondEffectAudio.volume = 1; // Устанавливаем громкость на стандартное значение
-//   secondEffectAudio.play(); // Воспроизведение выбранного файла
-
-//   // Интервал для создания вспышек
-//   const flashInterval = setInterval(() => {
-//     createFlash();
-//   }, 85); // Более частые и резкие вспышки
-
-//   // Остановка эффекта после завершения аудио
-//   secondEffectAudio.addEventListener("ended", () => {
-//     clearInterval(flashInterval);
-//     document.body.removeChild(flashElement);
-//     startThirdEffect(); // Переход к следующему эффекту
-//   });
-// }
-
-// // Функция для создания вспышек
-// function createFlash() {
-//   const flash = document.createElement("div");
-//   flash.className = "flash";
-
-//   const size = 40; // Размер вспышек
-//   const rows = Math.ceil(window.innerHeight / size);
-//   const cols = Math.ceil(window.innerWidth / size);
-
-//   const canvasFlash = document.createElement("canvas");
-//   canvasFlash.width = window.innerWidth;
-//   canvasFlash.height = window.innerHeight;
-
-//   const ctxFlash = canvasFlash.getContext("2d");
-
-//   // Используем контрастные цвета
-//   const colors = ["#00ff00", "#800080"];
-
-//   // Заполняем экран цветами
-//   for (let row = 0; row < rows; row++) {
-//     for (let col = 0; col < cols; col++) {
-//       const x = col * size;
-//       const y = row * size;
-//       const color = colors[Math.floor(Math.random() * colors.length)];
-//       ctxFlash.fillStyle = color;
-//       ctxFlash.fillRect(x, y, size, size);
-//     }
-//   }
-
-//   // Добавляем анимацию вспышки
-//   flash.style.backgroundImage = `url(${canvasFlash.toDataURL()})`;
-//   flash.style.animation = "flashAnimation 0.2s linear"; // Быстрая анимация
-
-//   document.body.appendChild(flash);
-
-//   // Удаляем вспышку после завершения анимации
-//   flash.addEventListener("animationend", () => {
-//     document.body.removeChild(flash);
-//   });
-// }
-
-// // CSS для анимации вспышек
-// const style = document.createElement("style");
-// style.innerHTML = `
-//   @keyframes flashAnimation {
-//     0% { opacity: 1; }
-//     100% { opacity: 0; }
-//   }
-//   .flash {
-//     position: absolute;
-//     top: 0;
-//     left: 0;
-//     width: 100%;
-//     height: 100%;
-//     pointer-events: none;
-//   }
-// `;
-// document.head.appendChild(style);
 // Глобальный массив аудиофайлов для второго эффекта
 const audioFiles = [
-  ".src/audio/2.mp3",
-  ".src/audio/2a.mp3",
-  ".src/audio/2b.mp3",
-  ".src/audio/2c.mp3",
-  ".src/audio/2d.mp3",
-  ".src/audio/2e.mp3",
-  ".src/audio/2f.mp3",
-  ".src/audio/2g.mp3",
+  "src/audio/2.mp3",
+  "src/audio/2a.mp3",
+  "src/audio/2b.mp3",
+  "src/audio/2c.mp3",
+  "src/audio/2d.mp3",
+  "src/audio/2e.mp3",
+  "src/audio/2f.mp3",
+  "src/audio/2g.mp3",
 ];
 
 // Функция для случайного выбора аудиофайла
@@ -322,6 +217,97 @@ const randomPhrases = [
   "There's no light at the end of the tunnel.",
   "Everything fades away.",
   "I don't belong here.",
+  "Nothing really matters anymore.",
+  "Silence is my only friend.",
+  "I'm just a shadow.",
+  "Every step feels heavier.",
+  "No one would notice if I disappeared.",
+  "The stars don't shine for me.",
+  "Drowning in my own thoughts.",
+  "Happiness is just an illusion.",
+  "Everything I touch turns to dust.",
+  "I'm screaming, but no one hears.",
+  "My heart is as empty as my soul.",
+  "The echoes of my past haunt me.",
+  "Dreams crumble into nightmares.",
+  "I wear a mask so no one sees the pain.",
+  "Hope is a lie we tell ourselves.",
+  "The cold embraces me like an old friend.",
+  "I've forgotten how to feel anything.",
+  "Every smile I force feels like a lie.",
+  "I'm a ghost trapped in a body.",
+  "Time drags on, but nothing changes.",
+  "Love is just another way to suffer.",
+  "I've given up on finding peace.",
+  "I'm a stranger in my own life.",
+  "All roads lead to the same emptiness.",
+  "Memories hurt more than reality.",
+  "Nothing I do ever matters.",
+  "My thoughts are a prison I can't escape.",
+  "I've lost myself somewhere along the way.",
+  "Even my shadow leaves me in the dark.",
+  "The weight of existence is unbearable.",
+  "No one is coming to save me.",
+  "The more I reach out, the further I fall.",
+  "I'm nothing more than a passing whisper.",
+  "The darkness is the only thing that's real.",
+  "Even the sun feels cold to me.",
+  "My reflection doesn't recognize me.",
+  "I drift through life like a forgotten melody.",
+  "I no longer believe in happy endings.",
+  "All I see are broken dreams and empty promises.",
+  "The wind carries my whispers into the void.",
+  "Even silence feels too loud.",
+  "My mind is a battlefield I can't win.",
+  "No matter how much I sleep, I wake up exhausted.",
+  "I wish I could just disappear forever.",
+  "Every second feels like a lifetime of suffering.",
+  "I don't even know who I am anymore.",
+  "The pain never fades, it just changes shape.",
+  "I fake a smile so no one asks questions.",
+  "Some wounds never heal, they just stay hidden.",
+  "I don't feel alive, just less dead.",
+  "It's exhausting pretending I'm okay.",
+  "The walls are closing in, and I don't care anymore.",
+  "I keep waiting for something to change, but it never does.",
+  "I'm just waiting for the day I finally let go.",
+  "I'm tired of fighting a war I can't win.",
+  "No one sees the storm inside me.",
+  "I whisper for help, but the world is deaf.",
+  "If I disappeared, how long would it take for anyone to notice?",
+  "I don't belong anywhere, not even in my own skin.",
+  "Every breath feels like a burden.",
+  "I wake up hoping I won’t.",
+  "Nothing is ever enough to fill the void.",
+  "Even my dreams are empty.",
+  "I feel like a mistake that shouldn't exist.",
+  "The deeper I go, the harder it is to climb back up.",
+  "It's not that I want to die, I just don't want to be here.",
+  "I feel like a ghost pretending to be human.",
+  "My own thoughts are my worst enemy.",
+  "The weight of the past crushes me every day.",
+  "I wish I could restart, or just stop.",
+  "No matter how much I scream inside, no one hears.",
+  "The world keeps moving, but I'm stuck in place.",
+  "Nothing feels real anymore, not even me.",
+  "I laugh so people don't see me breaking inside.",
+  "I'm just running out of reasons to keep going.",
+  "I keep thinking ‘what’s the point?’",
+  "The pain is the only thing that reminds me I’m still here.",
+  "Some days I wonder if I was meant to exist at all.",
+  "I don’t cry anymore. Even that takes too much energy.",
+  "People say it gets better, but they don’t know how deep the hole is.",
+  "I'm just an empty shell, waiting to crack.",
+  "Every goodbye feels like it should be the last.",
+  "I wish I could tell someone, but the words never come.",
+  "I'm drowning in my own mind, and no one sees it.",
+  "Even the things I once loved feel hollow now.",
+  "I keep waiting for the pain to stop, but it never does.",
+  "It feels like I'm screaming into an empty world.",
+  "I've been strong for too long, and I have nothing left.",
+  "It’s not that I don’t care anymore. It’s that I don’t feel anything at all.",
+  "Made of rotten flesh, every part of me decays.",
+  "Pills work... for a moment. But nothing lasts forever.",
 ];
 
 // Функция для создания вспышек
@@ -378,10 +364,10 @@ function addRandomText() {
   // Стилизация текста
   textElement.style.position = "absolute";
   textElement.style.color = "white";
-  textElement.style.fontFamily = "'Arial', sans-serif";
+  textElement.style.fontFamily = "'Times New Roman', sans-serif";
   textElement.style.fontSize = "48px";
   textElement.style.fontWeight = "bold";
-  textElement.style.textShadow = "0 0 15px black";
+  // textElement.style.textShadow = "0 0 15px black";
   textElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
   textElement.style.padding = "10px 20px";
   textElement.style.borderRadius = "5px";
@@ -588,7 +574,7 @@ function startFourthEffect() {
   setInterval(createGrowingCircle, 1000); // Следующий круг каждые 1 секунду
 
   // Аудио для 4-го эффекта
-  const audio4 = new Audio("./audio/4.mp3");
+  const audio4 = new Audio("src/audio/4.mp3");
   audio4
     .play()
     .catch((err) =>
@@ -610,13 +596,12 @@ audio3.addEventListener("ended", () => {
   stopRainbowBackground(); // Останавливаем радужный фон
   startFourthEffect(); // Запуск четвёртого эффекта
 });
-
 function startFifthEffect() {
-  const audio5 = new Audio("./audio/5.mp3");
+  const audio5 = new Audio("src/audio/5.mp3");
   audio5
-    .play()
-    .catch((err) => console.error("Ошибка воспроизведения пятого аудио:", err));
-
+  .play()
+  .catch((err) => console.error("Ошибка воспроизведения пятого аудио:", err));
+  
   // Контейнер для эффекта
   const fifthEffectContainer = document.createElement("div");
   fifthEffectContainer.id = "fifth-effect";
@@ -628,129 +613,128 @@ function startFifthEffect() {
   fifthEffectContainer.style.pointerEvents = "none";
   fifthEffectContainer.style.zIndex = "999";
   document.body.appendChild(fifthEffectContainer);
-
+  
   // Инициализация Three.js
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
   );
   const renderer = new THREE.WebGLRenderer({ alpha: true }); // Прозрачный фон
   renderer.setSize(window.innerWidth, window.innerHeight);
   fifthEffectContainer.appendChild(renderer.domElement);
-
+  
   // Устанавливаем прозрачный фон
   renderer.setClearColor(0x000000, 0); // Черный фон с полной прозрачностью
-
+  
   const spheres = [];
   const sphereGeometry = new THREE.SphereGeometry(0.05, 16, 16); // Маленькие сферы
   const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // Для радужной сферы
-
+  
   const borderGeometry = new THREE.SphereGeometry(0.055, 16, 16); // Немного большая сфера для бордера
   const borderMaterial = new THREE.MeshBasicMaterial({
-    color: 0x808080, // Серый цвет для бордера
-    opacity: 0.5, // Немного прозрачности, чтобы увидеть радужный цвет
-    transparent: true, // Включаем прозрачность
+  color: 0x808080, // Серый цвет для бордера
+  opacity: 0.5, // Немного прозрачности, чтобы увидеть радужный цвет
+  transparent: true, // Включаем прозрачность
   });
-
+  
   const group = new THREE.Group(); // Группа для управления всеми сферами
   scene.add(group);
-
+  
   for (let i = 0; i < 1000; i++) {
-    // Сфера с радужным цветом
-    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial.clone());
-    // Бордер
-    const border = new THREE.Mesh(borderGeometry, borderMaterial.clone());
-
-    group.add(sphere);
-    group.add(border); // Добавляем бордер вокруг каждой сферы
-
-    spheres.push({ sphere, border }); // Храним пары для дальнейшего использования
+  // Сфера с радужным цветом
+  const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial.clone());
+  // Бордер
+  const border = new THREE.Mesh(borderGeometry, borderMaterial.clone());
+  
+  group.add(sphere);
+  group.add(border); // Добавляем бордер вокруг каждой сферы
+  
+  spheres.push({ sphere, border }); // Храним пары для дальнейшего использования
   }
-
+  
   camera.position.z = 5;
-
+  
   let colorShift = 0; // Для смены цветов
   let sphereOffset = 0; // Смещение для диагонального движения
   let pulseTime = 0; // Время для синхронной пульсации
   const pulseFrequency = 50; // Частота пульсации в ударах в минуту
   const pulseSpeed = (pulseFrequency / 60) * Math.PI * 2; // Сколько радиан наращивается за один кадр для пульсации
-
+  
   // Функция для обновления фона
   function updateBackground() {
-    const colors = [
-      new THREE.Color(0x550000), // Темно-красный
-      new THREE.Color(0x000000), // Черный
-      new THREE.Color(0x333333), // Темно-серый
-      new THREE.Color(0x990000), // Красный
-    ];
-
-    // Меняем фон с плавными переходами
-    const backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-    // Добавляем прозрачность (например, 0.7)
-    scene.background = backgroundColor * 1;
-
-    // Устанавливаем прозрачность фона через setClearColor
-    renderer.setClearColor(backgroundColor, 0.7); // Устанавливаем прозрачность фона в 0.7
+  const colors = [
+  new THREE.Color(0x550000), // Темно-красный
+  new THREE.Color(0x000000), // Черный
+  new THREE.Color(0x333333), // Темно-серый
+  new THREE.Color(0x990000), // Красный
+  ];
+  
+  // Меняем фон с плавными переходами
+  const backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+  
+  // Добавляем прозрачность (например, 0.7)
+  scene.background = backgroundColor * 1;
+  
+  // Устанавливаем прозрачность фона через setClearColor
+  renderer.setClearColor(backgroundColor, 0.7); // Устанавливаем прозрачность фона в 0.7
   }
-
+  
   // Анимация и обновление фона
   function animate() {
-    requestAnimationFrame(animate);
-
-    colorShift += 0.01; // Плавное изменение цвета
-    sphereOffset += 0.005; // Смещение для диагонального движения
-    pulseTime += pulseSpeed; // Время для пульсации
-
-    updateBackground(); // Обновляем фон
-
-    // Диагональное движение группы
-    group.position.x = Math.sin(sphereOffset) * 1.5; // Движение по X
-    group.position.y = Math.cos(sphereOffset) * 1.5; // Движение по Y
-
-    // Распределение в форме сферы
-    spheres.forEach(({ sphere, border }, index) => {
-      const phi = Math.acos(-1 + (2 * index) / spheres.length);
-      const theta = Math.sqrt(spheres.length * Math.PI) * phi;
-
-      sphere.position.x = 1.5 * Math.sin(phi) * Math.cos(theta);
-      sphere.position.y = 1.5 * Math.sin(phi) * Math.sin(theta);
-      sphere.position.z = 1.5 * Math.cos(phi);
-
-      border.position.x = sphere.position.x;
-      border.position.y = sphere.position.y;
-      border.position.z = sphere.position.z;
-
-      // Цвет сферы плавно меняется на радужный
-      const hue = (index / spheres.length + colorShift) % 1; // Радужный цвет на основе индекса
-      sphere.material.color.setHSL(hue, 1, 0.5); // Изменяем основной цвет на радужный
-
-      // Быстрая синхронная пульсация с частотой 120 ударов в минуту
-      const scale = 1 + 0.3 * Math.sin(pulseTime); // Пульсация с амплитудой 0.3
-      sphere.scale.setScalar(scale);
-      border.scale.setScalar(scale + 0.005); // Бордер немного больше, но очень маленький
-
-      // Серый цвет для бордера с прозрачностью
-      border.material.color.set(0x808080);
-    });
-
-    // Вращение группы для создания ощущения 3D
-    group.rotation.x += 0.01;
-    group.rotation.y += 0.01;
-
-    renderer.render(scene, camera);
-  }
-
-  animate();
-
-  audio5.addEventListener("ended", () => {
-    document.body.removeChild(fifthEffectContainer);
+  requestAnimationFrame(animate);
+  
+  colorShift += 0.01; // Плавное изменение цвета
+  sphereOffset += 0.005; // Смещение для диагонального движения
+  pulseTime += pulseSpeed; // Время для пульсации
+  
+  updateBackground(); // Обновляем фон
+  
+  // Диагональное движение группы
+  group.position.x = Math.sin(sphereOffset) * 1.5; // Движение по X
+  group.position.y = Math.cos(sphereOffset) * 1.5; // Движение по Y
+  
+  // Распределение в форме сферы
+  spheres.forEach(({ sphere, border }, index) => {
+  const phi = Math.acos(-1 + (2 * index) / spheres.length);
+  const theta = Math.sqrt(spheres.length * Math.PI) * phi;
+  
+  sphere.position.x = 1.5 * Math.sin(phi) * Math.cos(theta);
+  sphere.position.y = 1.5 * Math.sin(phi) * Math.sin(theta);
+  sphere.position.z = 1.5 * Math.cos(phi);
+  
+  border.position.x = sphere.position.x;
+  border.position.y = sphere.position.y;
+  border.position.z = sphere.position.z;
+  
+  // Цвет сферы плавно меняется на радужный
+  const hue = (index / spheres.length + colorShift) % 1; // Радужный цвет на основе индекса
+  sphere.material.color.setHSL(hue, 1, 0.5); // Изменяем основной цвет на радужный
+  
+  // Быстрая синхронная пульсация с частотой 120 ударов в минуту
+  const scale = 1 + 0.3 * Math.sin(pulseTime); // Пульсация с амплитудой 0.3
+  sphere.scale.setScalar(scale);
+  border.scale.setScalar(scale + 0.005); // Бордер немного больше, но очень маленький
+  
+  // Серый цвет для бордера с прозрачностью
+  border.material.color.set(0x808080);
   });
-}
-
+  
+  // Вращение группы для создания ощущения 3D
+  group.rotation.x += 0.01;
+  group.rotation.y += 0.01;
+  
+  renderer.render(scene, camera);
+  }
+  
+  animate();
+  
+  audio5.addEventListener("ended", () => {
+  document.body.removeChild(fifthEffectContainer);
+  });
+  }
 // Запуск первого эффекта
 
 document.body.addEventListener("click", () => {

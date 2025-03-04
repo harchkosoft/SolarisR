@@ -42,12 +42,12 @@ body {
 
 .flash-text {
   position: absolute;
-  z-index: 9999; /* Очень высокий индекс */
+  z-index: 1; /* Очень высокий индекс */
   color: white;
-  font-family: 'Arial', sans-serif;
+  /* font-family: 'Times New Roman', sans-serif; */
   font-size: 48px;
   font-weight: bold;
-  text-shadow: 0 0 15px black;
+  /* text-shadow: 0 0 15px black; */
   background-color: rgba(0, 0, 0, 0.6);
   padding: 10px 20px;
   border-radius: 5px;
@@ -65,7 +65,7 @@ body {
 }
 
 .flash-text {
-  animation: textFade 0.2s linear forwards; /* Плавное исчезновение */
+  animation: textFade 0.03s; /* Плавное исчезновение */
 }
 canvas {
   display: block;
