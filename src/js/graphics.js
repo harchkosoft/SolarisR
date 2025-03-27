@@ -12,42 +12,40 @@ let flashElement;
 let intervalId;
 let rainbowBackgroundInterval;
 
-// Создание слоя радужного фона
 const rainbowBackground = document.createElement("div");
 rainbowBackground.className = "rainbow-background";
 document.body.appendChild(rainbowBackground);
 
-// Функция для рандомного изменения фона
 function changeBackground() {
-  // Случайное время для изменения фона (от 1.5 до 2.5 секунд)
   const changeTime = Math.random() * 1000 + 1500;
 
-  // Таймер, который будет менять фон через случайный интервал
   rainbowBackgroundInterval = setTimeout(() => {
-    // Генерация случайных радужных цветов
     const randomHue = Math.random() * 360;
     rainbowBackground.style.backgroundColor = `hsla(${randomHue}, 100%, 50%, 1)`;
 
-    // Затем возвращаем фон обратно через 150 мс
     setTimeout(() => {
-      rainbowBackground.style.backgroundColor = ""; // Возвращаем исходный фон
+      rainbowBackground.style.backgroundColor = "";
     }, 150);
 
-    // Повторяем через случайный интервал
     changeBackground();
   }, changeTime);
 }
 
-// Остановка изменения фона после завершения 3-го эффекта
 function stopRainbowBackground() {
   clearTimeout(rainbowBackgroundInterval);
-  rainbowBackground.style.backgroundColor = ""; // Останавливаем смену фона
+  rainbowBackground.style.backgroundColor = "";
 }
 
-// Первый эффект: Размытие + Затемнение фона + Квадраты без анимации + Эффект плавления
 function startBlurEffect() {
   blurElement = document.createElement("div");
   blurElement.className = "blur-effect";
+  blurElement.style.position = "absolute";
+  blurElement.style.top = "-50%";
+  blurElement.style.left = "-50%";
+  blurElement.style.width = "200vw";
+  blurElement.style.height = "200vh";
+  blurElement.style.pointerEvents = "none";
+  blurElement.style.zIndex = "10";
   document.body.appendChild(blurElement);
 
   const squaresContainer = document.createElement("div");
@@ -60,10 +58,11 @@ function startBlurEffect() {
   squaresContainer.style.zIndex = "15";
   document.body.appendChild(squaresContainer);
 
-  let isDarkening = false; // Флаг для затемнения
-  let totalOffset = 0; // Накопленное смещение вправо-влево
-  const maxShake = 10; // Максимальная амплитуда дрожания
-  const shakeSpeed = 50; // Скорость обновления (миллисекунды)
+  let isDarkening = false;
+  let totalOffsetX = 0;
+  let totalOffsetY = 0;
+  const maxShake = 40;
+  const shakeSpeed = 50;
 
   const blurInterval = setInterval(() => {
     const randomBlur = Math.random() * 5 + 5;
@@ -74,49 +73,59 @@ function startBlurEffect() {
       blurElement.style.backgroundColor = randomColor;
     }
 
-    // Затемнение фона
-    if (!isDarkening && Math.random() < 0.05) {
+    if (!isDarkening && Math.random() < 0.2) {
       isDarkening = true;
 
-      document.body.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+      document.body.style.transition = "background-color 2s ease-in-out";
+      document.body.style.backgroundColor = "rgba(0, 0, 0, 0.95)";
+
       setTimeout(() => {
-        isDarkening = false;
+        document.body.style.transition = "background-color 0.5s ease-in-out";
         document.body.style.backgroundColor = "";
-      }, 1500);
+        isDarkening = false;
+      }, 4000);
     }
 
-    // Создание случайных квадратов
     createRandomSquare(squaresContainer);
 
-    // Эффект дрожания вправо-влево
-    const shakeOffset = Math.random() * maxShake * 2 - maxShake; // Случайное смещение в пределах [-maxShake, +maxShake]
-    totalOffset += shakeOffset * 0.1; // Накапливаем смещение (умеренно)
-    document.body.style.transform = `translateX(${totalOffset}px)`; // Применяем смещение
+    const shakeOffsetX = Math.random() * maxShake * 2 - maxShake;
+    const shakeOffsetY = Math.random() * maxShake * 2 - maxShake;
+    totalOffsetX += shakeOffsetX * 0.2;
+    totalOffsetY += shakeOffsetY * 0.2;
+
+    blurElement.style.transform = `
+      translate(${totalOffsetX}px, ${totalOffsetY}px)
+    `;
+
+    squaresContainer.style.transform = `
+      translate(${totalOffsetX}px, ${totalOffsetY}px)
+    `;
   }, shakeSpeed);
+
+  applyMeltEffect();
 
   setTimeout(() => {
     clearInterval(blurInterval);
     document.body.removeChild(blurElement);
     document.body.removeChild(squaresContainer);
-    document.body.style.transform = ""; // Сбрасываем transform после завершения эффекта
+    blurElement.style.transform = "";
+    removeMeltEffect();
     startSecondEffect();
-  }, 8000); // Продолжительность первого эффекта
+  }, 80000);
 }
 
-// Функция для создания случайных квадратов
 function createRandomSquare(container) {
   const square = document.createElement("div");
   square.style.position = "absolute";
 
-  // Размер квадратов (от 200px до 450px)
   const size = Math.random() * 250 + 200;
   square.style.width = `${size}px`;
   square.style.height = `${size}px`;
 
-  // Прозрачность 50%
-  square.style.backgroundColor = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`;
+  square.style.backgroundColor = `rgba(${Math.random() * 255}, ${
+    Math.random() * 255
+  }, ${Math.random() * 255}, 0.5)`;
 
-  // Случайное положение на экране
   const x = Math.random() * (window.innerWidth - size);
   const y = Math.random() * (window.innerHeight - size);
 
@@ -125,37 +134,33 @@ function createRandomSquare(container) {
 
   container.appendChild(square);
 
-  // Резкое исчезновение квадратов
   setTimeout(() => {
-    container.removeChild(square); // Удаляем квадрат сразу
-  }, Math.random() * 300 + 200); // Квадраты исчезают через случайный интервал (0.5-2 секунд)
+    container.removeChild(square);
+  }, Math.random() * 300 + 200);
 }
 
-// Функция для добавления эффекта плавления через CSS-фильтры
 function applyMeltEffect() {
   const meltFilter = document.createElement("style");
   meltFilter.innerHTML = `
     body {
-      filter: contrast(1.5) brightness(0.9) saturate(1.2);
-      animation: meltEffect 2s infinite alternate;
+      animation: meltEffect 2s infinite alternate ease-in-out;
     }
 
     @keyframes meltEffect {
       0% {
-        filter: contrast(1.5) brightness(0.9) saturate(1.2);
+        filter: contrast(1.5) brightness(0.9) saturate(1.2) hue-rotate(0deg) blur(0px);
       }
       50% {
-        filter: contrast(1.2) brightness(1.1) saturate(1.5);
+        filter: contrast(1.2) brightness(1.1) saturate(1.5) hue-rotate(20deg) blur(2px);
       }
       100% {
-        filter: contrast(1.5) brightness(0.9) saturate(1.2);
+        filter: contrast(1.5) brightness(0.9) saturate(1.2) hue-rotate(-20deg) blur(1px);
       }
     }
   `;
   document.head.appendChild(meltFilter);
 }
 
-// Функция для удаления эффекта плавления
 function removeMeltEffect() {
   const meltFilters = document.querySelectorAll("style");
   meltFilters.forEach((style) => {
@@ -163,10 +168,9 @@ function removeMeltEffect() {
       document.head.removeChild(style);
     }
   });
-  document.body.style.filter = ""; // Сбрасываем фильтр
+  document.body.style.filter = "";
 }
 
-// Глобальный массив аудиофайлов для второго эффекта
 const audioFiles = [
   "src/audio/2.mp3",
   "src/audio/2a.mp3",
@@ -178,7 +182,6 @@ const audioFiles = [
   "src/audio/2g.mp3",
 ];
 
-// Функция для случайного выбора аудиофайла
 function getRandomAudioFile() {
   const randomIndex = Math.floor(Math.random() * audioFiles.length);
   return audioFiles[randomIndex];
@@ -188,22 +191,19 @@ function startSecondEffect() {
   flashElement.className = "flash";
   document.body.appendChild(flashElement);
 
-  // Случайный выбор аудиофайла из глобального массива
   const randomAudioFile = getRandomAudioFile();
   const audioElement = new Audio(randomAudioFile);
   audioElement.volume = 1;
   audioElement.play();
 
-  // Интервал для создания вспышек
   const flashInterval = setInterval(() => {
     createFlash();
-  }, 85); // Более частые и резкие вспышки
+  }, 85);
 
-  // Остановка эффекта после завершения аудио
   audioElement.addEventListener("ended", () => {
     clearInterval(flashInterval);
     document.body.removeChild(flashElement);
-    startThirdEffect(); // Переход к следующему эффекту
+    startThirdEffect();
   });
 }
 const randomPhrases = [
@@ -310,12 +310,11 @@ const randomPhrases = [
   "Pills work... for a moment. But nothing lasts forever.",
 ];
 
-// Функция для создания вспышек
 function createFlash() {
   const flash = document.createElement("div");
   flash.className = "flash";
 
-  const size = 40; // Размер каждого квадратика
+  const size = 40;
   const rows = Math.ceil(window.innerHeight / size);
   const cols = Math.ceil(window.innerWidth / size);
 
@@ -325,10 +324,8 @@ function createFlash() {
 
   const ctxFlash = canvasFlash.getContext("2d");
 
-  // Оригинальные цвета: зеленый и фиолетовый
   const colors = ["#00ff00", "#800080"];
 
-  // Рисуем квадратики на канве
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
       const x = col * size;
@@ -339,60 +336,48 @@ function createFlash() {
     }
   }
 
-  // Применяем канву как фон вспышки
   flash.style.backgroundImage = `url(${canvasFlash.toDataURL()})`;
-  flash.style.animation = "flashAnimation 0.2s linear"; // Быстрая анимация
+  flash.style.animation = "flashAnimation 0.2s linear";
 
   document.body.appendChild(flash);
 
-  // Добавляем случайный текст
-  addRandomText(); // Вызов функции для добавления текста
+  addRandomText();
 
   flash.addEventListener("animationend", () => {
     document.body.removeChild(flash);
   });
 }
-// Функция для добавления случайного текста
+
 function addRandomText() {
   const textElement = document.createElement("div");
   textElement.className = "flash-text";
 
-  // Выбираем случайную фразу
-  const randomPhrase = randomPhrases[Math.floor(Math.random() * randomPhrases.length)];
+  const randomPhrase =
+    randomPhrases[Math.floor(Math.random() * randomPhrases.length)];
   textElement.textContent = randomPhrase;
 
-  // Стилизация текста
   textElement.style.position = "absolute";
   textElement.style.color = "white";
   textElement.style.fontFamily = "'Times New Roman', sans-serif";
   textElement.style.fontSize = "48px";
   textElement.style.fontWeight = "bold";
-  // textElement.style.textShadow = "0 0 15px black";
   textElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
   textElement.style.padding = "10px 20px";
   textElement.style.borderRadius = "5px";
   textElement.style.pointerEvents = "none";
 
-  // Случайная позиция текста
   const randomX = Math.random() * (window.innerWidth - 400);
   const randomY = Math.random() * (window.innerHeight - 100);
   textElement.style.top = `${randomY}px`;
   textElement.style.left = `${randomX}px`;
 
-  // Добавляем текст на страницу
   document.body.appendChild(textElement);
 
-  // Удаляем текст после завершения анимации
   setTimeout(() => {
     document.body.removeChild(textElement);
-  }, 300); // Увеличим время до 300 мс, чтобы текст был заметнее
+  }, 300);
 }
-// function testText() {
-//   addRandomText();
-// }
 
-// setTimeout(testText, 1); // Добавляем текст через 1 секунду
-// Третий эффект: Геометрические фигуры
 function startThirdEffect() {
   audio3
     .play()
@@ -403,10 +388,9 @@ function startThirdEffect() {
       audio3.addEventListener("ended", () => {
         clearInterval(intervalId);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        stopRainbowBackground(); // Останавливаем радужный фон, когда 3-й эффект завершен
+        stopRainbowBackground();
       });
 
-      // Начинаем радужный фон только после начала третьего эффекта
       changeBackground();
     })
     .catch((err) =>
@@ -414,7 +398,6 @@ function startThirdEffect() {
     );
 }
 
-// Генерация случайных данных для фигур
 function getRandomPosition(size) {
   return {
     x: Math.random() * (canvas.width - size),
@@ -429,7 +412,6 @@ function getRandomColor() {
 }
 
 function getRandomSize() {
-  // Размер фигур теперь от 150 до 375
   return 150 + Math.random() * 500;
 }
 
@@ -492,7 +474,6 @@ function drawShapes() {
   });
 }
 
-// Настройка скорости анимации в зависимости от времени проигрывания звука
 function setAnimationSpeed() {
   const currentTime = audio3.currentTime;
   clearInterval(intervalId);
@@ -505,20 +486,17 @@ function setAnimationSpeed() {
 function animate() {
   drawShapes();
 }
-// Четвёртый эффект: Мгновенные выколотые круги с увеличением
-// Четвёртый эффект: Резкие растущие круги без анимации, увеличивающиеся из центра
+
 function startFourthEffect() {
-  // Создание мерцающего и искажённого фона
   const glitchBackground = document.createElement("div");
   glitchBackground.className = "glitch-background";
   document.body.appendChild(glitchBackground);
 
-  // Стили для круга и искажения
   const style = document.createElement("style");
   style.innerHTML = `
     .hollow-circle {
       position: absolute;
-      border: 10px solid rgba(0, 255, 0, 0.9); /* Фиксированный цвет */
+      border: 10px solid rgba(0, 255, 0, 0.9);
       border-radius: 50%;
       box-shadow: 0 0 30px 10px rgba(0, 255, 0, 0.8);
       pointer-events: none;
@@ -526,8 +504,8 @@ function startFourthEffect() {
       z-index: 1000;
       width: 150px;
       height: 150px;
-      transition: width 1.5s, height 1.5s; /* Увеличение размера за 1.5 секунды */
-      transform-origin: center; /* Увеличение из центра */
+      transition: width 1.5s, height 1.5s;
+      transform-origin: center;
     }
 
     .hollow-circle.static {
@@ -537,18 +515,15 @@ function startFourthEffect() {
   `;
   document.head.appendChild(style);
 
-  let activeCircles = 0; // Счётчик активных кругов
+  let activeCircles = 0;
 
-  // Функция для создания круга
   function createGrowingCircle() {
-    if (activeCircles >= 2) return; // Ограничение до 2 кругов одновременно
-
+    if (activeCircles >= 2) return;
     activeCircles++;
 
     const circle = document.createElement("div");
     circle.className = "hollow-circle";
 
-    // Случайное расположение (центр круга будет в этом месте)
     const randomX = Math.random() * (window.innerWidth - 750);
     const randomY = Math.random() * (window.innerHeight - 750);
 
@@ -557,23 +532,19 @@ function startFourthEffect() {
 
     document.body.appendChild(circle);
 
-    // Увеличиваем круг до 750px за 1.5 секунды
     setTimeout(() => {
       circle.classList.add("static");
-    }, 10); // Начнём увеличивать почти сразу
+    }, 10);
 
-    // Удаляем круг после завершения
     setTimeout(() => {
       document.body.removeChild(circle);
       activeCircles--;
-    }, 1500); // Круг остаётся 1.5 секунды
+    }, 1500);
   }
 
-  // Запускаем круги с интервалом
-  createGrowingCircle(); // Первый круг сразу
-  setInterval(createGrowingCircle, 1000); // Следующий круг каждые 1 секунду
+  createGrowingCircle();
+  setInterval(createGrowingCircle, 1000);
 
-  // Аудио для 4-го эффекта
   const audio4 = new Audio("src/audio/4.mp3");
   audio4
     .play()
@@ -581,28 +552,26 @@ function startFourthEffect() {
       console.error("Ошибка воспроизведения четвёртого аудио:", err)
     );
 
-  // Завершение эффекта
   audio4.addEventListener("ended", () => {
     document.body.removeChild(glitchBackground);
     document.head.removeChild(style);
-    startFifthEffect(); // Запуск пятого эффекта
+    startFifthEffect();
   });
 }
 
-// Переход от третьего к четвёртому эффекту
 audio3.addEventListener("ended", () => {
   clearInterval(intervalId);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  stopRainbowBackground(); // Останавливаем радужный фон
-  startFourthEffect(); // Запуск четвёртого эффекта
+  stopRainbowBackground();
+  startFourthEffect();
 });
+
 function startFifthEffect() {
   const audio5 = new Audio("src/audio/5.mp3");
   audio5
-  .play()
-  .catch((err) => console.error("Ошибка воспроизведения пятого аудио:", err));
-  
-  // Контейнер для эффекта
+    .play()
+    .catch((err) => console.error("Ошибка воспроизведения пятого аудио:", err));
+
   const fifthEffectContainer = document.createElement("div");
   fifthEffectContainer.id = "fifth-effect";
   fifthEffectContainer.style.position = "absolute";
@@ -613,129 +582,153 @@ function startFifthEffect() {
   fifthEffectContainer.style.pointerEvents = "none";
   fifthEffectContainer.style.zIndex = "999";
   document.body.appendChild(fifthEffectContainer);
-  
-  // Инициализация Three.js
+
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
   );
-  const renderer = new THREE.WebGLRenderer({ alpha: true }); // Прозрачный фон
+  const renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   fifthEffectContainer.appendChild(renderer.domElement);
-  
-  // Устанавливаем прозрачный фон
-  renderer.setClearColor(0x000000, 0); // Черный фон с полной прозрачностью
-  
+
+  renderer.setClearColor(0x000000, 0);
+
   const spheres = [];
-  const sphereGeometry = new THREE.SphereGeometry(0.05, 16, 16); // Маленькие сферы
-  const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // Для радужной сферы
-  
-  const borderGeometry = new THREE.SphereGeometry(0.055, 16, 16); // Немного большая сфера для бордера
+  const sphereGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+  const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+  const borderGeometry = new THREE.SphereGeometry(0.055, 16, 16);
   const borderMaterial = new THREE.MeshBasicMaterial({
-  color: 0x808080, // Серый цвет для бордера
-  opacity: 0.5, // Немного прозрачности, чтобы увидеть радужный цвет
-  transparent: true, // Включаем прозрачность
+    color: 0x808080,
+    opacity: 0.5,
+    transparent: true,
   });
-  
-  const group = new THREE.Group(); // Группа для управления всеми сферами
+
+  const group = new THREE.Group();
   scene.add(group);
-  
+
   for (let i = 0; i < 1000; i++) {
-  // Сфера с радужным цветом
-  const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial.clone());
-  // Бордер
-  const border = new THREE.Mesh(borderGeometry, borderMaterial.clone());
-  
-  group.add(sphere);
-  group.add(border); // Добавляем бордер вокруг каждой сферы
-  
-  spheres.push({ sphere, border }); // Храним пары для дальнейшего использования
+    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial.clone());
+    const border = new THREE.Mesh(borderGeometry, borderMaterial.clone());
+
+    group.add(sphere);
+    group.add(border);
+
+    spheres.push({ sphere, border });
   }
-  
-  camera.position.z = 5;
-  
-  let colorShift = 0; // Для смены цветов
-  let sphereOffset = 0; // Смещение для диагонального движения
-  let pulseTime = 0; // Время для синхронной пульсации
-  const pulseFrequency = 50; // Частота пульсации в ударах в минуту
-  const pulseSpeed = (pulseFrequency / 60) * Math.PI * 2; // Сколько радиан наращивается за один кадр для пульсации
-  
-  // Функция для обновления фона
+
+  camera.position.z = 7;
+
+  let colorShift = 0;
+  let pulseTime = 0;
+  const pulseFrequency = 50;
+  const pulseSpeed = (pulseFrequency / 60) * Math.PI * 2;
+
   function updateBackground() {
-  const colors = [
-  new THREE.Color(0x550000), // Темно-красный
-  new THREE.Color(0x000000), // Черный
-  new THREE.Color(0x333333), // Темно-серый
-  new THREE.Color(0x990000), // Красный
+    const colors = [
+      new THREE.Color(0x550000),
+      new THREE.Color(0x000000),
+      new THREE.Color(0x333333),
+      new THREE.Color(0x990000),
+    ];
+
+    const backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+    renderer.setClearColor(backgroundColor, 0.7);
+  }
+
+  const backgroundSphere = new THREE.Mesh(
+    new THREE.SphereGeometry(1.5, 32, 32),
+    new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      opacity: 0.9,
+      transparent: true,
+      side: THREE.BackSide,
+    })
+  );
+  group.add(backgroundSphere);
+
+  const rainbowColors = [
+    new THREE.Color(0xff0000),
+    new THREE.Color(0xff7f00),
+    new THREE.Color(0xffff00),
+    new THREE.Color(0x00ff00),
+    new THREE.Color(0x0000ff),
+    new THREE.Color(0x4b0082),
+    new THREE.Color(0x8b00ff),
   ];
-  
-  // Меняем фон с плавными переходами
-  const backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-  
-  // Добавляем прозрачность (например, 0.7)
-  scene.background = backgroundColor * 1;
-  
-  // Устанавливаем прозрачность фона через setClearColor
-  renderer.setClearColor(backgroundColor, 0.7); // Устанавливаем прозрачность фона в 0.7
-  }
-  
-  // Анимация и обновление фона
+
+  let currentColorIndex = 0;
+  let colorChangeTime = 0;
+
+  let directionX = -1;
+  let directionY = 1;
+
+  group.position.x = 5;
+  group.position.y = -3;
+
   function animate() {
-  requestAnimationFrame(animate);
-  
-  colorShift += 0.01; // Плавное изменение цвета
-  sphereOffset += 0.005; // Смещение для диагонального движения
-  pulseTime += pulseSpeed; // Время для пульсации
-  
-  updateBackground(); // Обновляем фон
-  
-  // Диагональное движение группы
-  group.position.x = Math.sin(sphereOffset) * 1.5; // Движение по X
-  group.position.y = Math.cos(sphereOffset) * 1.5; // Движение по Y
-  
-  // Распределение в форме сферы
-  spheres.forEach(({ sphere, border }, index) => {
-  const phi = Math.acos(-1 + (2 * index) / spheres.length);
-  const theta = Math.sqrt(spheres.length * Math.PI) * phi;
-  
-  sphere.position.x = 1.5 * Math.sin(phi) * Math.cos(theta);
-  sphere.position.y = 1.5 * Math.sin(phi) * Math.sin(theta);
-  sphere.position.z = 1.5 * Math.cos(phi);
-  
-  border.position.x = sphere.position.x;
-  border.position.y = sphere.position.y;
-  border.position.z = sphere.position.z;
-  
-  // Цвет сферы плавно меняется на радужный
-  const hue = (index / spheres.length + colorShift) % 1; // Радужный цвет на основе индекса
-  sphere.material.color.setHSL(hue, 1, 0.5); // Изменяем основной цвет на радужный
-  
-  // Быстрая синхронная пульсация с частотой 120 ударов в минуту
-  const scale = 1 + 0.3 * Math.sin(pulseTime); // Пульсация с амплитудой 0.3
-  sphere.scale.setScalar(scale);
-  border.scale.setScalar(scale + 0.005); // Бордер немного больше, но очень маленький
-  
-  // Серый цвет для бордера с прозрачностью
-  border.material.color.set(0x808080);
-  });
-  
-  // Вращение группы для создания ощущения 3D
-  group.rotation.x += 0.01;
-  group.rotation.y += 0.01;
-  
-  renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+
+    colorShift += 0.01;
+    pulseTime += pulseSpeed;
+    colorChangeTime += 0.05;
+
+    updateBackground();
+
+    group.position.x += directionX * 0.01;
+    group.position.y += directionY * 0.01;
+
+    if (group.position.x < -5 || group.position.x > 5) {
+      directionX *= -1;
+    }
+    if (group.position.y < -3 || group.position.y > 3) {
+      directionY *= -1;
+    }
+
+    group.rotation.x += 0.01;
+    group.rotation.y += 0.01;
+
+    spheres.forEach(({ sphere, border }, index) => {
+      const phi = Math.acos(-1 + (2 * index) / spheres.length);
+      const theta = Math.sqrt(spheres.length * Math.PI) * phi;
+
+      sphere.position.x = 1.5 * Math.sin(phi) * Math.cos(theta);
+      sphere.position.y = 1.5 * Math.sin(phi) * Math.sin(theta);
+      sphere.position.z = 1.5 * Math.cos(phi);
+
+      border.position.x = sphere.position.x;
+      border.position.y = sphere.position.y;
+      border.position.z = sphere.position.z;
+
+      const hue = (index / spheres.length + colorShift) % 1;
+      sphere.material.color.setHSL(hue, 1, 0.5);
+
+      const scale = 1 + 0.3 * Math.sin(pulseTime);
+      sphere.scale.setScalar(scale);
+      border.scale.setScalar(scale + 0.005);
+
+      border.material.color.set(0x808080);
+    });
+
+    if (colorChangeTime > 0.8) {
+      currentColorIndex = (currentColorIndex + 1) % rainbowColors.length;
+      backgroundSphere.material.color.copy(rainbowColors[currentColorIndex]);
+      colorChangeTime = 0;
+    }
+
+    renderer.render(scene, camera);
   }
-  
+
   animate();
-  
+
   audio5.addEventListener("ended", () => {
-  document.body.removeChild(fifthEffectContainer);
+    document.body.removeChild(fifthEffectContainer);
   });
-  }
-// Запуск первого эффекта
+}
 
 document.body.addEventListener("click", () => {
   if (audio1.paused && audio2.paused && audio3.paused) {
