@@ -111,7 +111,7 @@ function startBlurEffect() {
     blurElement.style.transform = "";
     removeMeltEffect();
     startSecondEffect();
-  }, 80000);
+  }, 79245);
 }
 
 function createRandomSquare(container) {
